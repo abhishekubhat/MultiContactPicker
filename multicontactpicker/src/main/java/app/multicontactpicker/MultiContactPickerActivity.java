@@ -1,12 +1,13 @@
-package com.wafflecopter.multicontactpicker;
+package app.multicontactpicker;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +17,9 @@ import android.widget.TextView;
 
 import com.l4digital.fastscroll.FastScrollRecyclerView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.wafflecopter.multicontactpicker.RxContacts.Contact;
-import com.wafflecopter.multicontactpicker.RxContacts.RxContacts;
+
+import app.multicontactpicker.RxContacts.Contact;
+import app.multicontactpicker.RxContacts.RxContacts;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -36,16 +39,15 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
     public static final String EXTRA_RESULT_SELECTION = "extra_result_selection";
     private FastScrollRecyclerView recyclerView;
-    private List<Contact> contactList = new ArrayList<>();
+    private final List<Contact> contactList = new ArrayList<>();
     private TextView tvSelectAll;
     private TextView tvSelectBtn;
     private TextView tvNoContacts;
     private LinearLayout controlPanel;
     private MultiContactPickerAdapter adapter;
-    private Toolbar toolbar;
+    private androidx.appcompat.widget.Toolbar toolbar;
     private MaterialSearchView searchView;
     private ProgressBar progressBar;
-    private MenuItem searchMenuItem;
     private MultiContactPicker.Builder builder;
     private boolean allSelected = false;
     private CompositeDisposable disposables;
@@ -66,7 +68,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
         setContentView(R.layout.activity_multi_contact_picker);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         searchView = (MaterialSearchView) findViewById(R.id.search_view);
         controlPanel = (LinearLayout) findViewById(R.id.controlPanel);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -77,7 +79,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
         initialiseUI(builder);
 
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -87,8 +89,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         adapter = new MultiContactPickerAdapter(contactList, new MultiContactPickerAdapter.ContactSelectListener() {
             @Override
             public void onContactSelected(Contact contact, int totalSelectedContacts) {
-                updateSelectBarContents(totalSelectedContacts);
-                if(builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE){
+                if (builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE) {
                     finishPicking();
                 }
             }
@@ -109,18 +110,21 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
             @Override
             public void onClick(View view) {
                 allSelected = !allSelected;
-                if(adapter != null)
+                if (adapter != null)
                     adapter.setAllSelected(allSelected);
-                if(allSelected)
-                    tvSelectAll.setText(getString(R.string.tv_unselect_all_btn_text));
-                else
+                if (allSelected) {
+                    tvSelectAll.setText(getString(R.string.tv_clear_all_btn_text));
+                    tvSelectBtn.setEnabled(true);
+                } else {
                     tvSelectAll.setText(getString(R.string.tv_select_all_btn_text));
+                    tvSelectBtn.setEnabled(false);
+                }
             }
         });
 
     }
 
-    private void finishPicking(){
+    private void finishPicking() {
         Intent result = new Intent();
         result.putExtra(EXTRA_RESULT_SELECTION, MultiContactPicker.buildResult(adapter.getSelectedContacts()));
         setResult(RESULT_OK, result);
@@ -128,48 +132,42 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         overrideAnimation();
     }
 
-    private void overrideAnimation(){
-        if(animationCloseEnter != null && animationCloseExit != null){
+    private void overrideAnimation() {
+        if (animationCloseEnter != null && animationCloseExit != null) {
             overridePendingTransition(animationCloseEnter, animationCloseExit);
         }
     }
 
-    private void updateSelectBarContents(int totalSelectedContacts){
-        tvSelectBtn.setEnabled(totalSelectedContacts > 0);
-        if(totalSelectedContacts > 0) {
-            tvSelectBtn.setText(getString(R.string.tv_select_btn_text_enabled, String.valueOf(totalSelectedContacts)));
-        } else {
-            tvSelectBtn.setText(getString(R.string.tv_select_btn_text_disabled));
-        }
-    }
-
-    private void initialiseUI(MultiContactPicker.Builder builder){
+    private void initialiseUI(MultiContactPicker.Builder builder) {
         setSupportActionBar(toolbar);
         searchView.setOnQueryTextListener(this);
 
         this.animationCloseEnter = builder.animationCloseEnter;
         this.animationCloseExit = builder.animationCloseExit;
 
-        if(builder.bubbleColor != 0)
+        recyclerView.setHandleColor(getResources().getColor(R.color.selection_bg_color));
+        recyclerView.setBubbleColor(getResources().getColor(R.color.selection_bg_color));
+
+        if (builder.bubbleColor != 0)
             recyclerView.setBubbleColor(builder.bubbleColor);
-        if(builder.handleColor != 0)
+        if (builder.handleColor != 0)
             recyclerView.setHandleColor(builder.handleColor);
-        if(builder.bubbleTextColor != 0)
+        if (builder.bubbleTextColor != 0)
             recyclerView.setBubbleTextColor(builder.bubbleTextColor);
-        if(builder.trackColor != 0)
+        if (builder.trackColor != 0)
             recyclerView.setTrackColor(builder.trackColor);
         recyclerView.setHideScrollbar(builder.hideScrollbar);
         recyclerView.setTrackVisible(builder.showTrack);
-        if(builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE){
+        if (builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE) {
             controlPanel.setVisibility(View.GONE);
-        }else{
+        } else {
             controlPanel.setVisibility(View.VISIBLE);
         }
 
-        if(builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE && builder.selectedItems.size() > 0){
+        if (builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE && builder.selectedItems.size() > 0) {
             throw new RuntimeException("You must be using MultiContactPicker.CHOICE_MODE_MULTIPLE in order to use setSelectedContacts()");
         }
-        
+
         if (builder.titleText != null) {
             setTitle(builder.titleText);
         }
@@ -177,20 +175,17 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:
-                setResult(RESULT_CANCELED);
-                finish();
-                overrideAnimation();
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            setResult(RESULT_CANCELED);
+            finish();
+            overrideAnimation();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadContacts(){
+    private void loadContacts() {
         tvSelectAll.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
         RxContacts.fetch(builder.columnLimit, this)
@@ -198,25 +193,26 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(new Consumer<Disposable>() {
                     @Override
-                    public void accept(Disposable disposable) throws Exception {
+                    public void accept(Disposable disposable) {
                         disposables.add(disposable);
                     }
                 })
                 .filter(new Predicate<Contact>() {
                     @Override
-                    public boolean test(Contact contact) throws Exception {
+                    public boolean test(@NonNull Contact contact) {
                         return contact.getDisplayName() != null;
                     }
                 })
                 .subscribe(new Observer<Contact>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NonNull Disposable d) {
 
                     }
+
                     @Override
-                    public void onNext(Contact value) {
+                    public void onNext(@NonNull Contact value) {
                         contactList.add(value);
-                        if(builder.selectedItems.contains(value.getId())){
+                        if (builder.selectedItems.contains(value.getId())) {
                             adapter.setContactSelected(value.getId());
                         }
                         Collections.sort(contactList, new Comparator<Contact>() {
@@ -225,7 +221,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
                                 return contact.getDisplayName().compareToIgnoreCase(t1.getDisplayName());
                             }
                         });
-                        if(builder.loadingMode == MultiContactPicker.LOAD_ASYNC) {
+                        if (builder.loadingMode == MultiContactPicker.LOAD_ASYNC) {
                             if (adapter != null) {
                                 adapter.notifyDataSetChanged();
                             }
@@ -234,25 +230,24 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NonNull Throwable e) {
                         progressBar.setVisibility(View.GONE);
                         e.printStackTrace();
                     }
 
                     @Override
                     public void onComplete() {
-                        if (contactList.size() == 0) { tvNoContacts.setVisibility(View.VISIBLE); }
+                        if (contactList.size() == 0) {
+                            tvNoContacts.setVisibility(View.VISIBLE);
+                        }
                         if (adapter != null && builder.loadingMode == MultiContactPicker.LOAD_SYNC) {
                             adapter.notifyDataSetChanged();
                         }
-                        if(adapter != null) {
-                            updateSelectBarContents(adapter.getSelectedContactsCount());
-                        }
+
                         progressBar.setVisibility(View.GONE);
                         tvSelectAll.setEnabled(true);
                     }
                 });
-
 
 
     }
@@ -260,14 +255,14 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mcp_menu_main, menu);
-        searchMenuItem = menu.findItem(R.id.mcp_action_search);
+        MenuItem searchMenuItem = menu.findItem(R.id.mcp_action_search);
         setSearchIconColor(searchMenuItem, builder.searchIconColor);
         searchView.setMenuItem(searchMenuItem);
         return true;
     }
 
     private void setSearchIconColor(MenuItem menuItem, final Integer color) {
-        if(color != null) {
+        if (color != null) {
             Drawable drawable = menuItem.getIcon();
             if (drawable != null) {
                 drawable = DrawableCompat.wrap(drawable);
@@ -279,7 +274,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        if(adapter != null){
+        if (adapter != null) {
             adapter.filterOnText(query);
         }
         return false;
@@ -287,7 +282,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if(adapter != null){
+        if (adapter != null) {
             adapter.filterOnText(newText);
         }
         return false;

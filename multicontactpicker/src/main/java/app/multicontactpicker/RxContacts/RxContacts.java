@@ -1,4 +1,4 @@
-package com.wafflecopter.multicontactpicker.RxContacts;
+package app.multicontactpicker.RxContacts;
 
 /*
  * Copyright (C) 2016 Ulrich Raab.
@@ -20,12 +20,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.util.LongSparseArray;
 
-import com.wafflecopter.multicontactpicker.LimitColumn;
+import androidx.annotation.NonNull;
+
+import app.multicontactpicker.LimitColumn;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -34,8 +34,7 @@ import io.reactivex.ObservableOnSubscribe;
 
 public class RxContacts {
 
-    private static final String DISPLAY_NAME = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-            ContactsContract.Contacts.DISPLAY_NAME_PRIMARY : ContactsContract.Contacts.DISPLAY_NAME;
+    private static final String DISPLAY_NAME = ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
 
     private static final Uri PHONE_CONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
     private static final Uri EMAIL_CONTENT_URI = ContactsContract.CommonDataKinds.Email.CONTENT_URI;
@@ -63,15 +62,13 @@ public class RxContacts {
     };
 
 
+    private final ContentResolver mResolver;
+    private final Context mContext;
 
-
-    private ContentResolver mResolver;
-    private Context mContext;
-
-    public static Observable<Contact> fetch (@NonNull final LimitColumn columnLimitChoice, @NonNull final Context context) {
+    public static Observable<Contact> fetch(@NonNull final LimitColumn columnLimitChoice, @NonNull final Context context) {
         return Observable.create(new ObservableOnSubscribe<Contact>() {
             @Override
-            public void subscribe(@NonNull ObservableEmitter<Contact> e) throws Exception {
+            public void subscribe(@NonNull ObservableEmitter<Contact> e) {
                 new RxContacts(context).fetch(columnLimitChoice, e);
             }
         });
@@ -82,7 +79,7 @@ public class RxContacts {
         mResolver = context.getContentResolver();
     }
 
-    private void fetch (LimitColumn columnLimitChoice, ObservableEmitter emitter) {
+    private void fetch(LimitColumn columnLimitChoice, ObservableEmitter emitter) {
         LongSparseArray<Contact> contacts = new LongSparseArray<>();
         Cursor cursor = createCursor(getFilter(columnLimitChoice));
         cursor.moveToFirst();
@@ -107,7 +104,7 @@ public class RxContacts {
             ColumnMapper.mapPhoto(cursor, contact, photoColumnIndex);
             ColumnMapper.mapThumbnail(cursor, contact, thumbnailColumnIndex);
 
-            switch (columnLimitChoice){
+            switch (columnLimitChoice) {
                 case EMAIL:
                     getEmail(id, contact);
                     break;
@@ -120,13 +117,13 @@ public class RxContacts {
                     break;
             }
 
-            if(columnLimitChoice == LimitColumn.EMAIL){
-                if(contact.getEmails().size() > 0){
+            if (columnLimitChoice == LimitColumn.EMAIL) {
+                if (contact.getEmails().size() > 0) {
                     contacts.put(id, contact);
                     //noinspection unchecked
                     emitter.onNext(contact);
                 }
-            }else{
+            } else {
                 contacts.put(id, contact);
                 //noinspection unchecked
                 emitter.onNext(contact);
@@ -137,20 +134,20 @@ public class RxContacts {
         emitter.onComplete();
     }
 
-    private void getEmail(long id, Contact contact){
+    private void getEmail(long id, Contact contact) {
         Cursor emailCursor = mResolver.query(EMAIL_CONTENT_URI, EMAIL_PROJECTION,
                 ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{String.valueOf(id)}, null);
 
-        if(emailCursor != null) {
+        if (emailCursor != null) {
             int emailDataColumnIndex = emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
-            if(emailCursor.moveToFirst()){
+            if (emailCursor.moveToFirst()) {
                 ColumnMapper.mapEmail(emailCursor, contact, emailDataColumnIndex);
             }
             emailCursor.close();
         }
     }
 
-    private void getPhoneNumber(long id, Cursor cursor, Contact contact, int hasPhoneNumberColumnIndex){
+    private void getPhoneNumber(long id, Cursor cursor, Contact contact, int hasPhoneNumberColumnIndex) {
         int hasPhoneNumber = Integer.parseInt(cursor.getString(hasPhoneNumberColumnIndex));
         if (hasPhoneNumber > 0) {
             Cursor phoneCursor = mResolver.query(PHONE_CONTENT_URI, NUMBER_PROJECTION,
@@ -160,24 +157,25 @@ public class RxContacts {
                 int phoneNumberColumnIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                 int phoneNumberTypeIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
                 int labelColIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL);
-                while (!phoneCursor.isAfterLast()) {
+
+                ColumnMapper.mapPhoneNumber(mContext, phoneCursor, contact, phoneNumberColumnIndex, phoneNumberTypeIndex, labelColIndex);
+               /* while (!phoneCursor.isAfterLast()) {
                     ColumnMapper.mapPhoneNumber(mContext, phoneCursor, contact, phoneNumberColumnIndex, phoneNumberTypeIndex, labelColIndex);
                     phoneCursor.moveToNext();
-                }
+                }*/
                 phoneCursor.close();
             }
         }
     }
 
-    private String getFilter(LimitColumn limitColumn){
-        switch (limitColumn){
-            case PHONE:
-                return ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0";
+    private String getFilter(LimitColumn limitColumn) {
+        if (limitColumn == LimitColumn.PHONE) {
+            return ContactsContract.Contacts.HAS_PHONE_NUMBER + " > 0";
         }
         return null;
     }
 
-    private Cursor createCursor (String filter) {
+    private Cursor createCursor(String filter) {
         return mResolver.query(
                 ContactsContract.Contacts.CONTENT_URI,
                 PROJECTION,

@@ -1,4 +1,4 @@
-package com.wafflecopter.multicontactpicker;
+package app.multicontactpicker;
 
 public enum LimitColumn {
     EMAIL,

@@ -1,4 +1,4 @@
-package com.wafflecopter.multicontactpicker.Views;
+package app.multicontactpicker.Views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -11,31 +11,31 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.wafflecopter.multicontactpicker.R;
+import app.multicontactpicker.R;
 
 /*
-*   Copyright 2014 Pavlos-Petros Tournaris
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*   http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*/
+ *   Copyright 2014 Pavlos-Petros Tournaris
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 
 public class RoundLetterView extends View {
 
-    private static int DEFAULT_TITLE_COLOR = Color.WHITE;
-    private static int DEFAULT_BACKGROUND_COLOR = Color.CYAN;
+    private static final int DEFAULT_TITLE_COLOR = Color.WHITE;
+    private static final int DEFAULT_BACKGROUND_COLOR = Color.CYAN;
     private static final int DEFAULT_VIEW_SIZE = 96;
-    private static float DEFAULT_TITLE_SIZE = 25f;
-    private static String DEFAULT_TITLE = "A";
+    private static final float DEFAULT_TITLE_SIZE = 25f;
+    private static final String DEFAULT_TITLE = "A";
 
     private int mTitleColor = DEFAULT_TITLE_COLOR;
     private int mBackgroundColor = DEFAULT_BACKGROUND_COLOR;
@@ -68,14 +68,14 @@ public class RoundLetterView extends View {
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.RoundedLetterView, defStyle, 0);
 
-        if(a.hasValue(R.styleable.RoundedLetterView_rlv_titleText)){
+        if (a.hasValue(R.styleable.RoundedLetterView_rlv_titleText)) {
             mTitleText = a.getString(R.styleable.RoundedLetterView_rlv_titleText);
         }
 
-        mTitleColor = a.getColor(R.styleable.RoundedLetterView_rlv_titleColor,DEFAULT_TITLE_COLOR);
-        mBackgroundColor = a.getColor(R.styleable.RoundedLetterView_rlv_backgroundColorValue,DEFAULT_BACKGROUND_COLOR);
+        mTitleColor = a.getColor(R.styleable.RoundedLetterView_rlv_titleColor, DEFAULT_TITLE_COLOR);
+        mBackgroundColor = a.getColor(R.styleable.RoundedLetterView_rlv_backgroundColorValue, DEFAULT_BACKGROUND_COLOR);
 
-        mTitleSize = a.getDimension(R.styleable.RoundedLetterView_rlv_titleSize,DEFAULT_TITLE_SIZE);
+        mTitleSize = a.getDimension(R.styleable.RoundedLetterView_rlv_titleSize, DEFAULT_TITLE_SIZE);
         a.recycle();
 
         //Title TextPaint
@@ -96,13 +96,13 @@ public class RoundLetterView extends View {
         mInnerRectF = new RectF();
     }
 
-    private void invalidateTextPaints(){
+    private void invalidateTextPaints() {
         mTitleTextPaint.setTypeface(mFont);
         mTitleTextPaint.setTextSize(mTitleSize);
         mTitleTextPaint.setColor(mTitleColor);
     }
 
-    private void invalidatePaints(){
+    private void invalidatePaints() {
         mBackgroundPaint.setColor(mBackgroundColor);
     }
 
@@ -139,6 +139,7 @@ public class RoundLetterView extends View {
 
     /**
      * Gets the title string attribute value.
+     *
      * @return The title string attribute value.
      */
     public String getTitleText() {
@@ -147,6 +148,7 @@ public class RoundLetterView extends View {
 
     /**
      * Sets the view's title string attribute value.
+     *
      * @param title The example string attribute value to use.
      */
     public void setTitleText(String title) {
@@ -156,6 +158,7 @@ public class RoundLetterView extends View {
 
     /**
      * Gets the background color attribute value.
+     *
      * @return The background color attribute value.
      */
     public int getBackgroundColor() {
@@ -164,6 +167,7 @@ public class RoundLetterView extends View {
 
     /**
      * Sets the view's background color attribute value.
+     *
      * @param backgroundColor The background color attribute value to use.
      */
     public void setBackgroundColor(int backgroundColor) {
@@ -173,6 +177,7 @@ public class RoundLetterView extends View {
 
     /**
      * Gets the title size dimension attribute value.
+     *
      * @return The title size dimension attribute value.
      */
     public float getTitleSize() {
@@ -181,6 +186,7 @@ public class RoundLetterView extends View {
 
     /**
      * Sets the view's title size dimension attribute value.
+     *
      * @param titleSize The title size dimension attribute value to use.
      */
     public void setTitleSize(float titleSize) {
@@ -190,15 +196,17 @@ public class RoundLetterView extends View {
 
     /**
      * Sets the view's title typeface.
+     *
      * @param font The typeface to be used for the text.
      */
-    public void setTextTypeface(Typeface font){
+    public void setTextTypeface(Typeface font) {
         this.mFont = font;
         invalidateTextPaints();
     }
 
     /**
      * Sets the view's title color attribute value.
+     *
      * @param titleColor The title color attribute value to use.
      */
     public void setTitleColor(int titleColor) {

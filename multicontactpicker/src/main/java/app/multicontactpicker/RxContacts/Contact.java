@@ -1,9 +1,8 @@
-package com.wafflecopter.multicontactpicker.RxContacts;
+package app.multicontactpicker.RxContacts;
 
-import android.graphics.Color;
 import android.net.Uri;
 
-import com.wafflecopter.multicontactpicker.ColorUtils;
+import app.multicontactpicker.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +15,10 @@ public class Contact implements Comparable<Contact> {
     private Uri mPhoto;
     private Uri mThumbnail;
     private List<String> mEmails = new ArrayList<>();
-    private List<PhoneNumber> mPhoneNumbers = new ArrayList<>();
+    //private List<PhoneNumber> mPhoneNumbers = new ArrayList<>();
+    private String mPhoneNumber;
     private boolean isSelected;
-    private int backgroundColor = Color.BLUE;
+    private int backgroundColor;
 
     Contact(long id) {
         this.mId = id;
@@ -77,12 +77,12 @@ public class Contact implements Comparable<Contact> {
         mEmails = emails;
     }
 
-    public List<PhoneNumber> getPhoneNumbers() {
-        return mPhoneNumbers;
+    public String getPhoneNumber() {
+        return mPhoneNumber;
     }
 
-    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
-        mPhoneNumbers = phoneNumbers;
+    public void setPhoneNumber(String phoneNumber) {
+        mPhoneNumber = phoneNumber;
     }
 
     public boolean isSelected() {
@@ -103,18 +103,18 @@ public class Contact implements Comparable<Contact> {
 
     @Override
     public int compareTo(Contact other) {
-        if(mDisplayName != null && other.mDisplayName != null)
+        if (mDisplayName != null && other.mDisplayName != null)
             return mDisplayName.compareTo(other.mDisplayName);
         else return -1;
     }
 
     @Override
-    public int hashCode () {
+    public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
     }
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }

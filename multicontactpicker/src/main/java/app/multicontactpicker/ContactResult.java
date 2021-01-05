@@ -1,11 +1,10 @@
-package com.wafflecopter.multicontactpicker;
+package app.multicontactpicker;
 
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.wafflecopter.multicontactpicker.RxContacts.Contact;
-import com.wafflecopter.multicontactpicker.RxContacts.PhoneNumber;
+import app.multicontactpicker.RxContacts.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +13,12 @@ import java.util.List;
 public class ContactResult implements Parcelable {
 
     private String mContactID;
-    private String mDisplayName;
-    private boolean mStarred;
-    private Uri mPhoto;
-    private Uri mThumbnail;
+    private final String mDisplayName;
+    private final boolean mStarred;
+    private final Uri mPhoto;
+    private final Uri mThumbnail;
     private List<String> mEmails = new ArrayList<>();
-    private List<PhoneNumber> mPhoneNumbers = new ArrayList<>();
+    private final String mPhoneNumber;
 
     public String getContactID() {
         return mContactID;
@@ -49,18 +48,23 @@ public class ContactResult implements Parcelable {
         return mEmails;
     }
 
-    public List<PhoneNumber> getPhoneNumbers() {
-        return mPhoneNumbers;
+    public String getPhoneNumber() {
+        return mPhoneNumber;
     }
 
-    public ContactResult(Contact contact){
+    /*public PhoneNumber> getPhoneNumbers() {
+        return mPhoneNumbers;
+    }*/
+
+    public ContactResult(Contact contact) {
         this.mContactID = String.valueOf(contact.getId());
         this.mDisplayName = contact.getDisplayName();
         this.mStarred = contact.isStarred();
         this.mPhoto = contact.getPhoto();
         this.mThumbnail = contact.getThumbnail();
-        this.mEmails.clear(); this.mEmails.addAll(contact.getEmails());
-        this.mPhoneNumbers.clear(); this.mPhoneNumbers.addAll(contact.getPhoneNumbers());
+        this.mEmails.clear();
+        this.mEmails.addAll(contact.getEmails());
+        this.mPhoneNumber = contact.getPhoneNumber();
     }
 
     protected ContactResult(Parcel in) {
@@ -70,7 +74,7 @@ public class ContactResult implements Parcelable {
         this.mPhoto = in.readParcelable(Uri.class.getClassLoader());
         this.mThumbnail = in.readParcelable(Uri.class.getClassLoader());
         this.mEmails = in.createStringArrayList();
-        in.readTypedList(this.mPhoneNumbers, PhoneNumber.CREATOR);
+        this.mPhoneNumber = in.readString();
     }
 
     @Override
@@ -86,7 +90,7 @@ public class ContactResult implements Parcelable {
         dest.writeParcelable(this.mPhoto, flags);
         dest.writeParcelable(this.mThumbnail, flags);
         dest.writeStringList(this.mEmails);
-        dest.writeTypedList(this.mPhoneNumbers);
+        dest.writeString(this.mPhoneNumber);
     }
 
     @SuppressWarnings("unused")
