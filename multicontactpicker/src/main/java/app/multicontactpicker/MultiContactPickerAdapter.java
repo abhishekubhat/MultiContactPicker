@@ -1,7 +1,6 @@
 package app.multicontactpicker;
 
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -14,16 +13,16 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.l4digital.fastscroll.FastScroller;
 
-import app.multicontactpicker.RxContacts.Contact;
-import app.multicontactpicker.Views.RoundLetterView;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import app.multicontactpicker.RxContacts.Contact;
+import app.multicontactpicker.Views.RoundLetterView;
 import io.reactivex.annotations.NonNull;
 
 class MultiContactPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements FastScroller.SectionIndexer, Filterable {
@@ -87,6 +86,7 @@ class MultiContactPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             if (contactItem.isSelected()) {
                 contactViewHolder.ivSelectedState.setVisibility(View.VISIBLE);
+
             } else {
                 contactViewHolder.ivSelectedState.setVisibility(View.INVISIBLE);
             }
@@ -110,7 +110,7 @@ class MultiContactPickerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             int endPos = startPos + query.length();
             if (startPos != -1) {
                 Spannable spannable = new SpannableString(originalString);
-                ColorStateList colorStateList = new ColorStateList(new int[][]{new int[]{}}, new int[]{view.getResources().getColor(R.color.colorOnBackground)});
+                ColorStateList colorStateList = new ColorStateList(new int[][]{new int[]{}}, new int[]{ContextCompat.getColor(view.getContext(), R.color.colorOnBackground)});
                 TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, colorStateList, null);
                 spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 tv.setText(spannable);

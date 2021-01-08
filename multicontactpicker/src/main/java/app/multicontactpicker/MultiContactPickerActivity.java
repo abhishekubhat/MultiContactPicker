@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import com.l4digital.fastscroll.FastScrollRecyclerView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -40,8 +42,8 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
     public static final String EXTRA_RESULT_SELECTION = "extra_result_selection";
     private FastScrollRecyclerView recyclerView;
     private final List<Contact> contactList = new ArrayList<>();
-    private TextView tvSelectAll;
-    private TextView tvSelectBtn;
+    private MaterialButton btnSelectAll;
+    private MaterialButton btnFinish;
     private TextView tvNoContacts;
     private LinearLayout controlPanel;
     private MultiContactPickerAdapter adapter;
@@ -72,8 +74,8 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         searchView = (MaterialSearchView) findViewById(R.id.search_view);
         controlPanel = (LinearLayout) findViewById(R.id.controlPanel);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        tvSelectAll = (TextView) findViewById(R.id.tvSelectAll);
-        tvSelectBtn = (TextView) findViewById(R.id.tvSelect);
+        btnSelectAll = findViewById(R.id.btnSelectAll);
+        btnFinish = findViewById(R.id.btnFinish);
         tvNoContacts = (TextView) findViewById(R.id.tvNoContacts);
         recyclerView = (FastScrollRecyclerView) findViewById(R.id.recyclerView);
 
@@ -85,10 +87,10 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
         adapter = new MultiContactPickerAdapter(contactList, new MultiContactPickerAdapter.ContactSelectListener() {
             @Override
             public void onContactSelected(Contact contact, int totalSelectedContacts) {
+                btnFinish.setEnabled(totalSelectedContacts > 0);
                 if (builder.selectionMode == MultiContactPicker.CHOICE_MODE_SINGLE) {
                     finishPicking();
                 }
@@ -99,25 +101,23 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
         recyclerView.setAdapter(adapter);
 
-        tvSelectBtn.setOnClickListener(new View.OnClickListener() {
+        btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finishPicking();
             }
         });
 
-        tvSelectAll.setOnClickListener(new View.OnClickListener() {
+        btnSelectAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 allSelected = !allSelected;
                 if (adapter != null)
                     adapter.setAllSelected(allSelected);
                 if (allSelected) {
-                    tvSelectAll.setText(getString(R.string.tv_clear_all_btn_text));
-                    tvSelectBtn.setEnabled(true);
+                    btnSelectAll.setText(getString(R.string.tv_clear_all_btn_text));
                 } else {
-                    tvSelectAll.setText(getString(R.string.tv_select_all_btn_text));
-                    tvSelectBtn.setEnabled(false);
+                    btnSelectAll.setText(getString(R.string.tv_select_all_btn_text));
                 }
             }
         });
@@ -132,6 +132,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         overrideAnimation();
     }
 
+
     private void overrideAnimation() {
         if (animationCloseEnter != null && animationCloseExit != null) {
             overridePendingTransition(animationCloseEnter, animationCloseExit);
@@ -145,8 +146,10 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         this.animationCloseEnter = builder.animationCloseEnter;
         this.animationCloseExit = builder.animationCloseExit;
 
-        recyclerView.setHandleColor(getResources().getColor(R.color.selection_bg_color));
-        recyclerView.setBubbleColor(getResources().getColor(R.color.selection_bg_color));
+
+        int color = ContextCompat.getColor(getApplicationContext(), R.color.selection_bg_color);
+        recyclerView.setHandleColor(color);
+        recyclerView.setBubbleColor(color);
 
         if (builder.bubbleColor != 0)
             recyclerView.setBubbleColor(builder.bubbleColor);
@@ -186,7 +189,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
     }
 
     private void loadContacts() {
-        tvSelectAll.setEnabled(false);
+        btnSelectAll.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
         RxContacts.fetch(builder.columnLimit, this)
                 .subscribeOn(Schedulers.newThread())
@@ -244,8 +247,11 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
                             adapter.notifyDataSetChanged();
                         }
 
+                        if (adapter != null) {
+                            btnFinish.setEnabled((adapter.getSelectedContactsCount() > 0));
+                        }
                         progressBar.setVisibility(View.GONE);
-                        tvSelectAll.setEnabled(true);
+                        btnSelectAll.setEnabled(true);
                     }
                 });
 
