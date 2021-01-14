@@ -26,5 +26,4 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation "com.google.android.material:material:1.2.1"
     implementation "androidx.fragment:fragment:1.2.1"
-    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 }

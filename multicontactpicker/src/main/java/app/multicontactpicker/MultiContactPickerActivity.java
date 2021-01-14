@@ -3,32 +3,29 @@ package app.multicontactpicker;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.button.MaterialButton;
 import com.l4digital.fastscroll.FastScrollRecyclerView;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
-
-import app.multicontactpicker.RxContacts.Contact;
-import app.multicontactpicker.RxContacts.RxContacts;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import app.multicontactpicker.RxContacts.Contact;
+import app.multicontactpicker.RxContacts.RxContacts;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -38,7 +35,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
-public class MultiContactPickerActivity extends AppCompatActivity implements MaterialSearchView.OnQueryTextListener {
+public class MultiContactPickerActivity extends AppCompatActivity {
 
     public static final String EXTRA_RESULT_SELECTION = "extra_result_selection";
     private FastScrollRecyclerView recyclerView;
@@ -49,7 +46,6 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
     private LinearLayout controlPanel;
     private MultiContactPickerAdapter adapter;
     private androidx.appcompat.widget.Toolbar toolbar;
-    private SearchView searchView;
     private ProgressBar progressBar;
     private MultiContactPicker.Builder builder;
     private boolean allSelected = false;
@@ -67,12 +63,12 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
         disposables = new CompositeDisposable();
 
+        assert builder != null;
         setTheme(builder.theme);
 
         setContentView(R.layout.activity_multi_contact_picker);
 
         toolbar = findViewById(R.id.toolbar);
-        searchView = findViewById(R.id.mcp_action_search);
         controlPanel = findViewById(R.id.controlPanel);
         progressBar = findViewById(R.id.progressBar);
         btnSelectAll = findViewById(R.id.btnSelectAll);
@@ -142,7 +138,6 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
     private void initialiseUI(MultiContactPicker.Builder builder) {
         setSupportActionBar(toolbar);
-        searchView.setOnQueryTextListener(this);
 
         this.animationCloseEnter = builder.animationCloseEnter;
         this.animationCloseExit = builder.animationCloseExit;
@@ -261,9 +256,28 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mcp_menu_main, menu);
+
         MenuItem searchMenuItem = menu.findItem(R.id.mcp_action_search);
         setSearchIconColor(searchMenuItem, builder.searchIconColor);
-        searchView.setMenuItem(searchMenuItem);
+
+        SearchView searchView = (androidx.appcompat.widget.SearchView) searchMenuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (adapter != null) {
+                    adapter.filterOnText(query);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (adapter != null) {
+                    adapter.filterOnText(newText);
+                }
+                return false;
+            }
+        });
         return true;
     }
 
@@ -279,29 +293,9 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
     }
 
     @Override
-    public boolean onQueryTextSubmit(String query) {
-        if (adapter != null) {
-            adapter.filterOnText(query);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        if (adapter != null) {
-            adapter.filterOnText(newText);
-        }
-        return false;
-    }
-
-    @Override
     public void onBackPressed() {
-        if (searchView.isSearchOpen()) {
-            searchView.closeSearch();
-        } else {
-            super.onBackPressed();
-            overrideAnimation();
-        }
+        super.onBackPressed();
+        overrideAnimation();
     }
 
     @Override
