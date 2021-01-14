@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
@@ -48,7 +49,7 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
     private LinearLayout controlPanel;
     private MultiContactPickerAdapter adapter;
     private androidx.appcompat.widget.Toolbar toolbar;
-    private MaterialSearchView searchView;
+    private SearchView searchView;
     private ProgressBar progressBar;
     private MultiContactPicker.Builder builder;
     private boolean allSelected = false;
@@ -71,13 +72,13 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
         setContentView(R.layout.activity_multi_contact_picker);
 
         toolbar = findViewById(R.id.toolbar);
-        searchView = (MaterialSearchView) findViewById(R.id.search_view);
-        controlPanel = (LinearLayout) findViewById(R.id.controlPanel);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        searchView = findViewById(R.id.mcp_action_search);
+        controlPanel = findViewById(R.id.controlPanel);
+        progressBar = findViewById(R.id.progressBar);
         btnSelectAll = findViewById(R.id.btnSelectAll);
         btnFinish = findViewById(R.id.btnFinish);
-        tvNoContacts = (TextView) findViewById(R.id.tvNoContacts);
-        recyclerView = (FastScrollRecyclerView) findViewById(R.id.recyclerView);
+        tvNoContacts = findViewById(R.id.tvNoContacts);
+        recyclerView = findViewById(R.id.recyclerView);
 
         initialiseUI(builder);
 
@@ -145,7 +146,6 @@ public class MultiContactPickerActivity extends AppCompatActivity implements Mat
 
         this.animationCloseEnter = builder.animationCloseEnter;
         this.animationCloseExit = builder.animationCloseExit;
-
 
         int color = ContextCompat.getColor(getApplicationContext(), R.color.selection_bg_color);
         recyclerView.setHandleColor(color);

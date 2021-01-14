@@ -4,34 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
     android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginTop="2dp"
         android:layout_marginRight="6dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="10dp">
+        android:layout_marginBottom="4dp"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="5dp"
+        app:theme="@style/AppTheme.Toolbar">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:layout_gravity="center"
-            android:background="@color/colorPrimary"
-            app:theme="@style/Toolbar"
-            app:titleTextColor="@color/colorOnPrimary" />
+            android:layout_height="match_parent" />
 
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@color/colorOnBackground" />
-    </androidx.cardview.widget.CardView>
+        <!-- <com.miguelcatalan.materialsearchview.MaterialSearchView
+             android:id="@+id/search_view"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:textColorHint="#000000" />-->
+    </com.google.android.material.card.MaterialCardView>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -88,7 +86,6 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:text="@string/tv_select_all_btn_text"
-                android:textColor="@color/colorOnPrimary"
                 android:textSize="16sp" />
 
             <com.google.android.material.button.MaterialButton

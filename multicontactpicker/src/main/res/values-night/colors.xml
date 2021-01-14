@@ -1,27 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- app bars and buttons -->
-    <color name="colorPrimary">#2ea043</color>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorOnPrimary">#000000</color>
+    <color name="colorPrimaryVariant">#f5f5f5</color>
 
-    <!-- accents on components, such as FABS and selection controls -->
-    <!--    <color name="colorSecondary">#454b4f</color>-->
-    <color name="colorSecondary">#000000</color>
+    <color name="colorSecondary">#f5f5f5</color>
+    <color name="colorOnSecondary">#000000</color>
+    <color name="colorSecondaryVariant">#2c2c2c</color>
 
-    <!-- found behind scrollable content -->
-    <color name="colorBackground">#000000</color>
-
-    <!-- map to components such as cards, sheets, and menus -->
-    <color name="colorSurface">#000000</color>
-
-    <!-- indicates errors in components, such as text fields -->
     <color name="colorError">#d50000</color>
+    <color name="colorOnError">#ffffff</color>
 
-    <!-- “On” colors are primarily applied to text, iconography, and strokes. -->
-    <color name="colorOnPrimary">#ffffff</color>
-    <color name="colorOnBackground">#ffffff</color>
+    <color name="colorSurface">#212121</color>
     <color name="colorOnSurface">#ffffff</color>
+    <color name="colorOnSurfaceLight">#cccccc</color>
+
+    <color name="colorBackground">#000000</color>
+    <color name="colorOnBackground">#ffffff</color>
 
     <color name="selection_bg_color">#0000ff</color>
-    <color name="selector_contact_select_text_enabled">#ffffff</color>
+    <color name="selector_contact_select_text_enabled">#000000</color>
     <color name="selector_contact_select_text_default">#a4a4a4</color>
 </resources>

@@ -29,7 +29,7 @@ public class MultiContactPicker {
         protected transient Activity acc;
         protected transient Fragment frag;
         @StyleRes
-        protected int theme = R.style.MultiContactPicker;
+         protected int theme = R.style.MultiContactPicker;
         protected int bubbleColor;// = R.color.blue;
         protected int bubbleTextColor;
         protected int handleColor;

@@ -1,14 +1,11 @@
 package app.multicontactpickerexample;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -21,7 +18,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int CONTACT_PICKER_REQUEST = 991;
     private ArrayList<ContactResult> results = new ArrayList<>();
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +27,15 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         new MultiContactPicker.Builder(MainActivity.this) //Activity/fragment context
-                /*.theme(R.style.MyCustomPickerTheme) //Optional - default: MultiContactPicker.Azure
+                .setTitleText("Select Contacts") //Optional - only use if required
+                .setSelectedContacts(results) //Optional - will pre-select contacts of your choice. String... or List<ContactResult>
+                .setLoadingType(MultiContactPicker.LOAD_ASYNC) //Optional - default LOAD_ASYNC (wait till all loaded vs stream results)
+                .limitToColumn(LimitColumn.PHONE) //Optional - default NONE (Include phone + email, limiting to one can improve loading time)
+                .setActivityAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out)//Optional - default: No animation overrides
+                .showPickerForResult(CONTACT_PICKER_REQUEST);
+        /*.theme(R.style.MyCustomPickerTheme) //Optional - default: MultiContactPicker.Azure
                 .hideScrollbar(false) //Optional - default: false
                 .showTrack(true) //Optional - default: true
                 .searchIconColor(Color.BLACK) //Optional - default: White
@@ -40,14 +44,6 @@ public class MainActivity extends AppCompatActivity {
                 .bubbleColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary)) //Optional - default: Azure Blue
                 .bubbleTextColor(Color.WHITE) //Optional - default: White
                 */
-                .setTitleText("Select Contacts") //Optional - only use if required
-                .setSelectedContacts(results) //Optional - will pre-select contacts of your choice. String... or List<ContactResult>
-                .setLoadingType(MultiContactPicker.LOAD_ASYNC) //Optional - default LOAD_ASYNC (wait till all loaded vs stream results)
-                .limitToColumn(LimitColumn.PHONE) //Optional - default NONE (Include phone + email, limiting to one can improve loading time)
-                .setActivityAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out) //Optional - default: No animation overrides
-                .showPickerForResult(CONTACT_PICKER_REQUEST);
 
     }
 
